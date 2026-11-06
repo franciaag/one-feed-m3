@@ -40,7 +40,7 @@ body{font-family:'Roboto',system-ui,sans-serif;background:var(--surface);color:v
 
 /* ============ M3 small top app bar (64dp) ============ */
 .topbar{position:sticky;top:0;z-index:40;height:64px;display:flex;align-items:center;gap:8px;
-  padding:0 16px;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(12px)}
+  padding:0 16px;background:var(--surface)}
 .topbar .title{font-size:22px;font-weight:500;letter-spacing:0;line-height:28px;flex:1}
 .m3badge{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--on-primary-container);
   background:var(--primary-container);padding:4px 10px;border-radius:999px}
@@ -312,7 +312,7 @@ const FORMATS={
    ${actions(1204,88,12)}${lin('Format seen on: Instagram · Flickr')}</div>`},
  video:{icon:'smart_display',label:'Video',make:()=>`<div class="card in">${head(P[2],'6h')}
    <div class="card-media ratio-16x9"><video src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" poster="https://picsum.photos/seed/vid1/800/450" preload="none" controls playsinline></video></div>
-   <div class="card-body" style="padding-top:8px">Long-form horizontal video with real playback.</div>
+   <div class="card-body" style="padding-top:8px">Long-form horizontal video format. Player included; playback not verified in QA.</div>
    ${actions(8600,412,900)}${lin('Format seen on: YouTube · Vimeo')}</div>`},
  reel:{icon:'movie',label:'Reel',make:()=>`<div class="card in">
    <div class="card-media reel"><video src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4" poster="https://picsum.photos/seed/reel1/720/1120" preload="metadata" loop muted playsinline></video>
@@ -322,7 +322,7 @@ const FORMATS={
      <button class="act" onclick="toggleAct(this,'favorite',99)"><span class="msr">favorite</span><small>99</small></button>
      <button class="act" onclick="toast('Comments open in the full app')"><span class="msr">mode_comment</span><small>12</small></button>
      <button class="act" onclick="toast('Share sheet opens in the full app')"><span class="msr">share</span></button></div></div>
-   <div class="card-body" style="padding-top:8px"><b>Leo Park</b> · short vertical clip format, tap-to-play.</div>
+   <div class="card-body" style="padding-top:8px"><b>Leo Park</b> · short vertical clip format. Tap-to-play control; playback not verified in QA.</div>
    ${lin('Format seen on: Vine · TikTok · Reels')}</div>`},
  link:{icon:'link',label:'Link',make:()=>`<div class="card in">${head(P[4],'8h')}
    <div class="card-body">Worth your morning: a deep dive on spring physics in interface design.</div>
@@ -346,7 +346,7 @@ const FORMATS={
    <div class="readtime" style="padding:0 12px 8px"><span class="msr" style="font-size:16px">how_to_vote</span> 258 votes · 2 days left · local demo vote</div>
    ${actions(86,45,3)}${lin('Format seen on: Twitter polls · Mastodon')}</div>`},
  audio:{icon:'music_note',label:'Audio',make:()=>`<div class="card in">${head(P[7],'1d')}
-   <div class="card-body">Demo track from the weekend session. Real audio playback in a compact player card.</div>
+   <div class="card-body">Demo track from the weekend session. Compact player card. Playback not verified in QA.</div>
    <div class="audio"><button onclick="playAudio(this)" aria-label="Play"><span class="msr">play_arrow</span></button>
      <div class="wave">${Array.from({length:36},(_,i)=>`<i style="height:${20+Math.round(18*Math.abs(Math.sin(i*.7)))}px"></i>`).join('')}</div></div>
    <audio src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3" preload="none"></audio>
