@@ -197,6 +197,28 @@ body{font-family:'Roboto',system-ui,sans-serif;background:var(--surface);color:v
 /* tab cross-fade (fade-through, expressive effects) */
 @keyframes paneIn{from{opacity:0}to{opacity:1}}
 .pane.in{animation:paneIn var(--d-ef-slow) var(--ef-slow)}
+/* search bar */
+[hidden]{display:none!important}
+.searchbar{display:flex;align-items:center;gap:4px;padding:2px 8px 2px 16px;background:var(--surface);border-bottom:1px solid var(--outline-variant)}
+.searchbar .msr{color:var(--on-surface-variant);font-size:22px}
+.searchbar input{flex:1;border:0;background:none;font:inherit;font-size:14px;outline:none;color:var(--on-surface);height:44px}
+/* options menu */
+.menu{position:fixed;z-index:56;background:var(--surface-container);border-radius:12px;box-shadow:0 3px 8px rgba(0,0,0,.18);padding:4px;min-width:200px}
+.menu button{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;padding:12px;font:inherit;font-size:13px;font-weight:500;color:var(--on-surface);border-radius:8px;cursor:pointer;text-align:left}
+.menu button:active{background:var(--surface-container-high)}
+.menu .msr{font-size:20px;color:var(--on-surface-variant)}
+/* comments */
+.comments{margin:0 12px 8px;border-top:1px solid var(--outline-variant);padding-top:8px;display:flex;flex-direction:column;gap:8px}
+.cmt{display:flex;gap:8px;font-size:13px;line-height:18px;align-items:flex-start}
+.cmt img{width:24px;height:24px;border-radius:999px;flex:0 0 24px}
+.cmt b{font-weight:700;margin-right:4px}
+.cinput{display:flex;gap:8px;align-items:center}
+.cinput input{flex:1;border:1px solid var(--outline-variant);border-radius:999px;padding:8px 14px;font:inherit;font-size:13px;background:var(--surface);color:var(--on-surface);outline:none}
+.cinput button{border:0;background:var(--primary);color:var(--on-primary);border-radius:999px;height:36px;padding:0 16px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+/* composer */
+.composer{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.composer textarea{border:1px solid var(--outline-variant);border-radius:12px;padding:12px;font:inherit;font-size:14px;line-height:20px;background:var(--surface);color:var(--on-surface);outline:none;resize:none}
+.postbtn{border:0;background:var(--primary);color:var(--on-primary);border-radius:999px;height:40px;font:inherit;font-size:14px;font-weight:700;cursor:pointer}
 @media (prefers-reduced-motion:reduce){*{animation-duration:1ms!important;transition-duration:1ms!important}}
 </style>
 </head>
@@ -205,11 +227,17 @@ body{font-family:'Roboto',system-ui,sans-serif;background:var(--surface);color:v
   <header class="topbar">
     <div class="title">One Feed</div>
     <span class="m3badge">Material 3</span>
-    <button class="iconbtn" aria-label="Search" onclick="toast('Search is not part of this skeleton')"><span class="msr">search</span></button>
+    <button class="iconbtn" aria-label="Search" onclick="toggleSearch()"><span class="msr">search</span></button>
     <img class="avatar-s" src="https://picsum.photos/seed/ofme/64/64" alt="">
   </header>
 
-  <div class="demo-strip"><span class="msr">science</span><span>Format skeleton - sample content, nothing connected. Motion: Material 3 web curves.</span></div>
+  <div class="searchbar" id="searchbar" hidden>
+    <span class="msr">search</span>
+    <input id="searchin" type="search" placeholder="Search posts and people" oninput="doSearch(this.value)">
+    <button class="iconbtn" aria-label="Close search" onclick="closeSearch()"><span class="msr">close</span></button>
+  </div>
+
+  <div class="demo-strip"><span class="msr">science</span><span>Working local demo - sample content, your posts stay on this device. Motion: Material 3 web curves.</span></div>
 
   <div class="pane in" id="pane-home">
     <div class="stories" id="stories"></div>
@@ -241,8 +269,12 @@ body{font-family:'Roboto',system-ui,sans-serif;background:var(--surface);color:v
   <div class="sheet" id="sheet" role="dialog" aria-label="Compose">
     <div class="handle"></div>
     <h2>New post</h2>
-    <p>Pick a format. A sample card drops into the feed - skeleton demo, nothing is posted anywhere.</p>
+    <p>Text posts are yours - saved on this device only. Other formats add labeled sample cards.</p>
     <div class="fmtgrid" id="fmtgrid"></div>
+    <div class="composer" id="composer" hidden>
+      <textarea id="ctext" rows="3" maxlength="280" placeholder="Write your post - stays on this device"></textarea>
+      <button class="postbtn" onclick="postText()">Post</button>
+    </div>
   </div>
 
   <div class="viewer" id="viewer">
@@ -250,6 +282,11 @@ body{font-family:'Roboto',system-ui,sans-serif;background:var(--surface);color:v
     <div class="vhead"><img id="vava" src="" alt=""><b id="vname"></b></div>
     <button class="iconbtn vclose" id="vclose"><span class="msr">close</span></button>
     <img id="vimg" src="" alt="">
+  </div>
+
+  <div class="menu" id="menu" hidden>
+    <button onclick="menuHide()"><span class="msr">visibility_off</span>Hide this post</button>
+    <button onclick="menuCopy()"><span class="msr">content_copy</span>Copy post text</button>
   </div>
 
   <div class="toast" id="toastel"></div>
@@ -294,12 +331,12 @@ $('#vclose').onclick=closeStory;
 $('#viewer').onclick=e=>{if(e.target.id==='vimg'||e.target.id==='viewer')closeStory();};
 
 /* ---------- format templates ---------- */
-function head(p,sub){return `<div class="card-head"><img src="${p.a}" alt=""><div class="card-id"><div class="n">${p.n}</div><div class="h">${p.h} · ${sub}</div></div><button class="iconbtn" onclick="toast('Options are not part of this skeleton')"><span class="msr">more_vert</span></button></div>`;}
+function head(p,sub){return `<div class="card-head"><img src="${p.a}" alt=""><div class="card-id"><div class="n">${p.n}</div><div class="h">${p.h} · ${sub}</div></div><button class="iconbtn" onclick="openMenu(event)"><span class="msr">more_vert</span></button></div>`;}
 function actions(l,c,r){return `<div class="actions">
   <button class="act" data-k="like" onclick="toggleAct(this,'favorite',${l})"><span class="msr">favorite</span><small>${l}</small></button>
-  <button class="act" onclick="toast('Comments open in the full app')"><span class="msr">mode_comment</span><small>${c}</small></button>
+  <button class="act" onclick="toggleComments(this,${c})"><span class="msr">mode_comment</span><small>${c}</small></button>
   <button class="act" data-k="re" onclick="toggleAct(this,'repeat',${r})"><span class="msr">repeat</span><small>${r}</small></button>
-  <button class="act" onclick="toast('Share sheet opens in the full app')"><span class="msr">share</span></button></div>`;}
+  <button class="act" onclick="shareCard(this)"><span class="msr">share</span></button></div>`;}
 function lin(t,dead){return `<span class="lineage">${t}</span>`;}
 
 const FORMATS={
@@ -311,18 +348,18 @@ const FORMATS={
    <div class="card-body" style="padding-top:8px">Golden hour test roll. Single-image post format.</div>
    ${actions(1204,88,12)}${lin('Format seen on: Instagram · Flickr')}</div>`},
  video:{icon:'smart_display',label:'Video',make:()=>`<div class="card in">${head(P[2],'6h')}
-   <div class="card-media ratio-16x9"><video src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" poster="https://picsum.photos/seed/vid1/800/450" preload="none" controls playsinline></video></div>
-   <div class="card-body" style="padding-top:8px">Long-form horizontal video format. Player included; playback not verified in QA.</div>
+   <div class="card-media ratio-16x9"><video poster="https://picsum.photos/seed/vid1/800/450" preload="none" controls playsinline><source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4"><source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm" type="video/webm"></video></div>
+   <div class="card-body" style="padding-top:8px">Long-form horizontal video format with a working player (public CC0 sample).</div>
    ${actions(8600,412,900)}${lin('Format seen on: YouTube · Vimeo')}</div>`},
  reel:{icon:'movie',label:'Reel',make:()=>`<div class="card in">
-   <div class="card-media reel"><video src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4" poster="https://picsum.photos/seed/reel1/720/1120" preload="metadata" loop muted playsinline></video>
+   <div class="card-media reel"><video poster="https://picsum.photos/seed/reel1/720/1120" preload="metadata" loop muted playsinline><source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4"><source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm" type="video/webm"></video>
    <div class="grad"></div>
-   <div class="cap">Vertical short video. Tap to play - this one really plays.</div>
+   <div class="cap">Vertical short video. Tap to play.</div>
    <div class="rail">
      <button class="act" onclick="toggleAct(this,'favorite',99)"><span class="msr">favorite</span><small>99</small></button>
-     <button class="act" onclick="toast('Comments open in the full app')"><span class="msr">mode_comment</span><small>12</small></button>
-     <button class="act" onclick="toast('Share sheet opens in the full app')"><span class="msr">share</span></button></div></div>
-   <div class="card-body" style="padding-top:8px"><b>Leo Park</b> · short vertical clip format. Tap-to-play control; playback not verified in QA.</div>
+     <button class="act" onclick="toggleComments(this,12)"><span class="msr">mode_comment</span><small>12</small></button>
+     <button class="act" onclick="shareCard(this)"><span class="msr">share</span></button></div></div>
+   <div class="card-body" style="padding-top:8px"><b>Leo Park</b> · short vertical clip format with working tap-to-play.</div>
    ${lin('Format seen on: Vine · TikTok · Reels')}</div>`},
  link:{icon:'link',label:'Link',make:()=>`<div class="card in">${head(P[4],'8h')}
    <div class="card-body">Worth your morning: a deep dive on spring physics in interface design.</div>
@@ -346,7 +383,7 @@ const FORMATS={
    <div class="readtime" style="padding:0 12px 8px"><span class="msr" style="font-size:16px">how_to_vote</span> 258 votes · 2 days left · local demo vote</div>
    ${actions(86,45,3)}${lin('Format seen on: Twitter polls · Mastodon')}</div>`},
  audio:{icon:'music_note',label:'Audio',make:()=>`<div class="card in">${head(P[7],'1d')}
-   <div class="card-body">Demo track from the weekend session. Compact player card. Playback not verified in QA.</div>
+   <div class="card-body">Demo track from the weekend session. Compact player card with working playback (public sample track).</div>
    <div class="audio"><button onclick="playAudio(this)" aria-label="Play"><span class="msr">play_arrow</span></button>
      <div class="wave">${Array.from({length:36},(_,i)=>`<i style="height:${20+Math.round(18*Math.abs(Math.sin(i*.7)))}px"></i>`).join('')}</div></div>
    <audio src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3" preload="none"></audio>
@@ -370,11 +407,11 @@ const FORMATS={
 /* ---------- build feed ---------- */
 const order=['text','photo','video','reel','link','carousel','poll','audio','article','market','event'];
 const feed=$('#feed');
-order.forEach(k=>{const t=document.createElement('template');t.innerHTML=FORMATS[k].make().trim();const c=t.content.firstChild;c.classList.remove('in');feed.appendChild(c);});
+order.forEach(k=>{const t=document.createElement('template');t.innerHTML=FORMATS[k].make().trim();const c=t.content.firstChild;c.classList.remove('in');c.dataset.cid='seed-'+k;c.id='card-seed-'+k;feed.appendChild(c);});
 
 /* explore pane: format index */
 const ex=$('#explore');
-ex.innerHTML=Object.keys(FORMATS).map((k,i)=>`<div class="card" style="padding:10px 12px;display:flex;align-items:center;gap:10px">
+ex.innerHTML=Object.keys(FORMATS).map((k,i)=>`<div class="card" role="button" tabindex="0" onclick="goFormat('${k}')" style="padding:10px 12px;display:flex;align-items:center;gap:10px;cursor:pointer">
   <span class="msr" style="color:var(--primary);font-size:24px">${FORMATS[k].icon}</span>
   <div style="flex:1"><div style="font-size:14px;font-weight:700">${FORMATS[k].label}</div>
   <div style="font-size:11px;color:var(--on-surface-variant)">Format ${String(i+1).padStart(2,'0')} of ${Object.keys(FORMATS).length}</div></div>
@@ -407,19 +444,25 @@ $('#profile').innerHTML=`<div class="card" style="padding:16px 12px">
 function toggleAct(btn,icon,n){
   const on=btn.classList.toggle('on');
   const sm=btn.querySelector('small');if(sm)sm.textContent=n+(on?1:0);
+  const card=btn.closest('.card');if(card&&card.dataset.cid){state.acts[card.dataset.cid+':'+icon]=on;save();}
 }
 function dotSync(track){
   const dots=track.parentElement.querySelectorAll('.dots i');
   const i=Math.round(track.scrollLeft/track.clientWidth);
   dots.forEach((d,j)=>d.classList.toggle('on',j===i));
 }
-function vote(btn){
-  const poll=btn.parentElement;if(poll.dataset.done)return;poll.dataset.done='1';
+function renderVote(poll,idx){
+  poll.dataset.done='1';
   const votes=poll.dataset.votes.split(',').map(Number);const total=votes.reduce((a,b)=>a+b,0)+1;
   [...poll.children].forEach((o,i)=>{
-    const v=votes[i]+(o===btn?1:0);const pct=Math.round(v/total*100);
+    const v=votes[i]+(i===idx?1:0);const pct=Math.round(v/total*100);
     o.querySelector('.fill').style.width=pct+'%';o.querySelector('b').textContent=pct+'%';
   });
+}
+function vote(btn){
+  const poll=btn.parentElement;if(poll.dataset.done)return;
+  const idx=[...poll.children].indexOf(btn);renderVote(poll,idx);
+  const card=btn.closest('.card');if(card&&card.dataset.cid){state.votes[card.dataset.cid]=idx;save();}
 }
 let audioCtx={el:null,btn:null};
 function playAudio(btn){
@@ -453,17 +496,143 @@ const grid=$('#fmtgrid');
 Object.keys(FORMATS).forEach(k=>{
   const b=document.createElement('button');b.className='fmt';
   b.innerHTML=`<span class="msr">${FORMATS[k].icon}</span><span>${FORMATS[k].label}</span>`;
-  b.onclick=()=>{closeSheet();addCard(k);};
+  b.onclick=()=>{if(k==='text'){$('#composer').hidden=false;$('#ctext').focus();return;}closeSheet();const cid='u'+Date.now()+k;state.added.push({k,cid});save();addCard(k,cid);toast('Sample '+FORMATS[k].label.toLowerCase()+' card added - saved on this device');};
   grid.appendChild(b);
 });
 const sheet=$('#sheet'),scrim=$('#scrim');
-$('#fab').onclick=()=>{sheet.classList.add('open');scrim.classList.add('open');};
+$('#fab').onclick=()=>{$('#composer').hidden=true;$('#ctext').value='';sheet.classList.add('open');scrim.classList.add('open');};
 function closeSheet(){sheet.classList.remove('open');scrim.classList.remove('open');}
 scrim.onclick=closeSheet;
-function addCard(k){
-  const t=document.createElement('template');t.innerHTML=FORMATS[k].make().trim();const c=t.content.firstChild;
+function addCard(k,cid,text){
+  let c;
+  if(k==='usertext'){c=makeUserText(text);}
+  else{const t=document.createElement('template');t.innerHTML=FORMATS[k].make().trim();c=t.content.firstChild;}
+  c.dataset.cid=cid;c.id='card-'+cid;
   feed.prepend(c);c.scrollIntoView({behavior:'smooth',block:'center'});
-  toast(`Sample ${FORMATS[k].label.toLowerCase()} card added - skeleton only`);
+}
+
+/* ---------- persistence (localStorage, this device only) ---------- */
+const KEY='onefeed-v1';
+let state={added:[],acts:{},votes:{},hidden:[],comments:{}};
+try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&typeof s==='object')state=Object.assign(state,s);}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+
+function makeUserText(text){
+  const c=document.createElement('div');c.className='card in';
+  c.innerHTML=`<div class="card-head"><img src="https://picsum.photos/seed/ofme/96/96" alt=""><div class="card-id"><div class="n">You</div><div class="h">@you - this device</div></div><button class="iconbtn" onclick="openMenu(event)"><span class="msr">more_vert</span></button></div>
+  <div class="card-body"></div>
+  ${actions(0,0,0)}${lin('Your post - saved on this device')}`;
+  c.querySelector('.card-body').textContent=text;
+  return c;
+}
+function postText(){
+  const ta=$('#ctext');const text=ta.value.trim();if(!text){ta.focus();return;}
+  const cid='u'+Date.now()+'text';
+  state.added.push({k:'usertext',cid,text});save();
+  addCard('usertext',cid,text);
+  ta.value='';$('#composer').hidden=true;closeSheet();
+  toast('Posted - saved on this device');
+}
+
+/* restore saved state */
+(function restore(){
+  state.added.forEach(a=>addCard(a.k,a.cid,a.text));
+  state.hidden.forEach(cid=>{const c=document.getElementById('card-'+cid);if(c)c.remove();});
+  Object.keys(state.acts).forEach(key=>{
+    if(!state.acts[key])return;
+    const parts=key.split(':');const cid=parts[0],icon=parts[1];
+    const card=document.getElementById('card-'+cid);if(!card)return;
+    const btn=[...card.querySelectorAll('.act')].find(b=>b.querySelector('.msr').textContent===icon);
+    if(!btn)return;btn.classList.add('on');
+    const sm=btn.querySelector('small');if(sm)sm.textContent=(parseInt(sm.textContent)||0)+1;
+  });
+  Object.keys(state.votes).forEach(cid=>{
+    const card=document.getElementById('card-'+cid);if(!card)return;
+    const poll=card.querySelector('.poll');if(poll)renderVote(poll,state.votes[cid]);
+  });
+  Object.keys(state.comments).forEach(cid=>{
+    const n=(state.comments[cid]||[]).length;if(!n)return;
+    const card=document.getElementById('card-'+cid);if(!card)return;
+    const btn=[...card.querySelectorAll('.act')].find(b=>b.querySelector('.msr').textContent==='mode_comment');
+    if(btn){const sm=btn.querySelector('small');if(sm)sm.textContent=(parseInt(sm.textContent)||0)+n;}
+  });
+})();
+
+/* ---------- comments (local) ---------- */
+const SEEDCMT=[[1,'Love this - the walk-first rule is real.'],[3,'Golden hour never misses.']];
+function toggleComments(btn,base){
+  const card=btn.closest('.card');const cid=card.dataset.cid;
+  const old=card.querySelector('.comments');
+  if(old){old.remove();return;}
+  const mine=state.comments[cid]||[];
+  const box=document.createElement('div');box.className='comments';
+  let html=SEEDCMT.map(i=>`<div class="cmt"><img src="${P[i[0]].a}" alt=""><div><b>${P[i[0]].n}</b>${i[1]}</div></div>`).join('');
+  html+=mine.map(()=>`<div class="cmt"><img src="https://picsum.photos/seed/ofme/96/96" alt=""><div><b>You</b><span class="cmt-t"></span></div></div>`).join('');
+  html+=`<div class="cinput"><input maxlength="200" placeholder="Add a comment - stays on this device"><button>Post</button></div>`;
+  box.innerHTML=html;
+  const spans=box.querySelectorAll('.cmt-t');mine.forEach((m,i)=>{if(spans[i])spans[i].textContent=m.t;});
+  const inp=box.querySelector('input');
+  const post=()=>{const t=inp.value.trim();if(!t)return;
+    (state.comments[cid]=state.comments[cid]||[]).push({t});save();
+    btn.querySelector('small').textContent=base+state.comments[cid].length;
+    box.remove();toggleComments(btn,base);};
+  box.querySelector('.cinput button').onclick=post;
+  inp.onkeydown=e=>{if(e.key==='Enter')post();};
+  card.insertBefore(box,card.querySelector('.lineage'));
+  inp.focus();
+}
+
+/* ---------- options menu ---------- */
+let menuCard=null;
+function openMenu(e){
+  e.stopPropagation();
+  menuCard=e.target.closest('.card');
+  const m=$('#menu');m.hidden=false;
+  const r=e.target.closest('button').getBoundingClientRect();
+  m.style.left=Math.max(8,Math.min(r.right-200,window.innerWidth-208))+'px';
+  m.style.top=(r.bottom+4)+'px';
+  setTimeout(()=>document.addEventListener('click',closeMenuDoc,{once:true}),0);
+}
+function closeMenuDoc(){$('#menu').hidden=true;}
+function menuHide(){
+  closeMenuDoc();if(!menuCard)return;
+  const cid=menuCard.dataset.cid;
+  if(cid&&!state.hidden.includes(cid)){state.hidden.push(cid);save();}
+  menuCard.remove();
+  toast('Post hidden - clear site data to restore');
+}
+function menuCopy(){
+  closeMenuDoc();if(!menuCard)return;
+  const txt=menuCard.innerText.trim();
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(()=>toast('Post text copied'),()=>toast('Copy not available here'));
+  }else toast('Copy not available here');
+}
+
+/* ---------- share (copies a local demo link) ---------- */
+function shareCard(btn){
+  const card=btn.closest('.card');
+  const url=location.origin+location.pathname+'#card-'+card.dataset.cid;
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url).then(()=>toast('Link copied - opens this card in the demo'),()=>toast('Copy not available here'));
+  }else toast('Copy not available here');
+}
+
+/* ---------- search (filters the local feed) ---------- */
+function toggleSearch(){const b=$('#searchbar');b.hidden=!b.hidden;if(!b.hidden)$('#searchin').focus();else closeSearch();}
+function closeSearch(){$('#searchbar').hidden=true;$('#searchin').value='';doSearch('');}
+function doSearch(q){
+  q=(q||'').trim().toLowerCase();
+  document.querySelectorAll('#feed > .card').forEach(c=>{
+    c.style.display=(!q||c.textContent.toLowerCase().includes(q))?'':'none';
+  });
+}
+
+/* ---------- explore rows jump to their format card ---------- */
+function goFormat(k){
+  document.querySelector('.navitem[data-pane="pane-home"]').click();
+  const c=document.getElementById('card-seed-'+k);
+  if(c)setTimeout(()=>c.scrollIntoView({behavior:'smooth',block:'center'}),60);
 }
 </script>
 </body>
