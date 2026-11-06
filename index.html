@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script>try{if(localStorage.getItem('onefeed-theme')==='ios')document.documentElement.classList.add('ios')}catch(e){}</script>
 <title>One Feed - Material 3 format skeleton</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -219,6 +220,44 @@ body{font-family:'Roboto',system-ui,sans-serif;background:var(--surface);color:v
 .composer{display:flex;flex-direction:column;gap:8px;margin-top:12px}
 .composer textarea{border:1px solid var(--outline-variant);border-radius:12px;padding:12px;font:inherit;font-size:14px;line-height:20px;background:var(--surface);color:var(--on-surface);outline:none;resize:none}
 .postbtn{border:0;background:var(--primary);color:var(--on-primary);border-radius:999px;height:40px;font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+/* ============ Apple iOS-inspired theme (web approximation) ============ */
+html.ios{
+  --primary:#0A84FF; --on-primary:#FFFFFF; --primary-container:#D6E9FE; --on-primary-container:#04294E;
+  --secondary:#8E8E93; --secondary-container:#E5E5EA; --on-secondary-container:#1C1C1E;
+  --tertiary:#5E5CE6; --tertiary-container:#E4E3FA; --on-tertiary-container:#1B1B4D;
+  --surface:#F2F2F7; --surface-dim:#D1D1D6;
+  --surface-container-lowest:#FFFFFF; --surface-container-low:#FFFFFF; --surface-container:#FFFFFF;
+  --surface-container-high:#F2F2F7; --surface-container-highest:#E9E9EE;
+  --on-surface:#000000; --on-surface-variant:#3C3C43; --outline:#8E8E93; --outline-variant:#D1D1D6;
+  /* iOS-inspired easing - Apple publishes no official web curve; this is a web approximation */
+  --sp-fast:cubic-bezier(0.32,0.72,0,1); --sp-def:cubic-bezier(0.32,0.72,0,1); --sp-slow:cubic-bezier(0.32,0.72,0,1);
+  --ef-fast:cubic-bezier(0.25,0.1,0.25,1); --ef-def:cubic-bezier(0.25,0.1,0.25,1); --ef-slow:cubic-bezier(0.25,0.1,0.25,1);
+  --d-sp-fast:280ms; --d-sp-def:380ms; --d-sp-slow:500ms; --d-ef-fast:140ms; --d-ef-def:180ms; --d-ef-slow:260ms;
+}
+html.ios body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
+html.ios .card{background:#FFFFFF;border:1px solid var(--outline-variant);border-radius:12px}
+html.ios .card:active{transform:none}
+html.ios .topbar{border-bottom:1px solid var(--outline-variant)}
+html.ios .m3badge{background:var(--surface-container-high);color:var(--on-surface-variant)}
+html.ios .demo-strip{background:var(--surface-container-high)}
+html.ios .navbar{background:#F9F9F9}
+html.ios .navitem.on .pill{background:none;color:var(--primary)}
+html.ios .navitem.on span{color:var(--primary)}
+html.ios .fab{border-radius:999px;background:var(--primary);color:#fff}
+html.ios .fab:active{border-radius:999px}
+html.ios .story .ring{background:conic-gradient(from 210deg,#0A84FF,#5E5CE6,#0A84FF)}
+html.ios .sheet{border-radius:14px 14px 0 0}
+html.ios .act.on{color:var(--primary)}
+html.ios .postbtn,html.ios .cinput button,html.ios .audio button{background:var(--primary)}
+/* style menu check marks */
+#stylemenu button .msr{font-size:20px;color:var(--primary)}
+/* theme morph: view-transition glide + color/radius cross-glide */
+::view-transition-old:root{animation:vt-out .42s cubic-bezier(0.32,0.72,0,1) both}
+::view-transition-new:root{animation:vt-in .42s cubic-bezier(0.32,0.72,0,1) both}
+@keyframes vt-out{to{opacity:0;transform:translateY(-14px) scale(.985)}}
+@keyframes vt-in{from{opacity:0;transform:translateY(14px) scale(.985)}}
+html.theming *{transition:background-color .45s ease,color .45s ease,border-color .45s ease,border-radius .45s ease,box-shadow .45s ease !important}
+@media (prefers-reduced-motion:reduce){::view-transition-old:root,::view-transition-new:root{animation:none}}
 @media (prefers-reduced-motion:reduce){*{animation-duration:1ms!important;transition-duration:1ms!important}}
 </style>
 </head>
@@ -226,7 +265,8 @@ body{font-family:'Roboto',system-ui,sans-serif;background:var(--surface);color:v
 <div class="phone">
   <header class="topbar">
     <div class="title">One Feed</div>
-    <span class="m3badge">Material 3</span>
+    <span class="m3badge" id="m3badge">Material 3</span>
+    <button class="iconbtn" aria-label="Style" onclick="openStyleMenu(event)"><span class="msr">palette</span></button>
     <button class="iconbtn" aria-label="Search" onclick="toggleSearch()"><span class="msr">search</span></button>
     <img class="avatar-s" src="https://picsum.photos/seed/ofme/64/64" alt="">
   </header>
@@ -237,7 +277,7 @@ body{font-family:'Roboto',system-ui,sans-serif;background:var(--surface);color:v
     <button class="iconbtn" aria-label="Close search" onclick="closeSearch()"><span class="msr">close</span></button>
   </div>
 
-  <div class="demo-strip"><span class="msr">science</span><span>Working local demo - sample content, your posts stay on this device. Motion: Material 3 web curves.</span></div>
+  <div class="demo-strip"><span class="msr">science</span><span>Working local demo - sample content, your posts stay on this device. <span id="motionnote">Motion: Material 3 web curves.</span></span></div>
 
   <div class="pane in" id="pane-home">
     <div class="stories" id="stories"></div>
@@ -284,6 +324,10 @@ body{font-family:'Roboto',system-ui,sans-serif;background:var(--surface);color:v
     <img id="vimg" src="" alt="">
   </div>
 
+  <div class="menu" id="stylemenu" hidden>
+    <button onclick="setTheme('google')"><span class="msr" id="ck-google">check</span>Google Material 3</button>
+    <button onclick="setTheme('ios')"><span class="msr" id="ck-ios">check</span>Apple iOS style</button>
+  </div>
   <div class="menu" id="menu" hidden>
     <button onclick="menuHide()"><span class="msr">visibility_off</span>Hide this post</button>
     <button onclick="menuCopy()"><span class="msr">content_copy</span>Copy post text</button>
@@ -627,6 +671,45 @@ function doSearch(q){
     c.style.display=(!q||c.textContent.toLowerCase().includes(q))?'':'none';
   });
 }
+
+/* ---------- style theme: Google Material 3 / Apple iOS-inspired ---------- */
+let theme='google';
+try{theme=localStorage.getItem('onefeed-theme')||'google';}catch(e){}
+function applyThemeClass(){document.documentElement.classList.toggle('ios',theme==='ios');}
+function syncThemeUI(){
+  $('#ck-google').style.visibility=theme==='google'?'visible':'hidden';
+  $('#ck-ios').style.visibility=theme==='ios'?'visible':'hidden';
+  $('#m3badge').textContent=theme==='ios'?'iOS style':'Material 3';
+  $('#motionnote').textContent=theme==='ios'
+    ?'Motion: iOS-style web easing (web approximation, not UIKit).'
+    :'Motion: Material 3 web curves.';
+}
+function openStyleMenu(e){
+  e.stopPropagation();
+  const m=$('#stylemenu');m.hidden=false;syncThemeUI();
+  const r=e.target.closest('button').getBoundingClientRect();
+  m.style.left=Math.max(8,Math.min(r.right-230,window.innerWidth-238))+'px';
+  m.style.top=(r.bottom+4)+'px';
+  setTimeout(()=>document.addEventListener('click',()=>{m.hidden=true;},{once:true}),0);
+}
+function setTheme(t){
+  $('#stylemenu').hidden=true;
+  if(t===theme){syncThemeUI();return;}
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const swap=()=>{
+    theme=t;try{localStorage.setItem('onefeed-theme',t);}catch(e){}
+    applyThemeClass();syncThemeUI();
+  };
+  if(reduce){swap();}
+  else if(document.startViewTransition){document.startViewTransition(swap);}
+  else{
+    document.documentElement.classList.add('theming');swap();
+    setTimeout(()=>document.documentElement.classList.remove('theming'),520);
+  }
+  toast(t==='ios'?'Apple iOS style applied':'Google Material 3 style applied');
+}
+applyThemeClass();
+syncThemeUI();
 
 /* ---------- explore rows jump to their format card ---------- */
 function goFormat(k){
