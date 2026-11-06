@@ -220,6 +220,13 @@ body{font-family:'Roboto',system-ui,sans-serif;background:var(--surface);color:v
 .composer{display:flex;flex-direction:column;gap:8px;margin-top:12px}
 .composer textarea{border:1px solid var(--outline-variant);border-radius:12px;padding:12px;font:inherit;font-size:14px;line-height:20px;background:var(--surface);color:var(--on-surface);outline:none;resize:none}
 .postbtn{border:0;background:var(--primary);color:var(--on-primary);border-radius:999px;height:40px;font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+/* segmented Google/Apple theme toggle */
+.segtheme{position:relative;display:flex;align-items:center;background:var(--surface-container-high);border-radius:999px;height:36px;padding:3px}
+.segpill{position:absolute;top:3px;bottom:3px;left:3px;width:0;border-radius:999px;background:var(--primary-container);
+  transition:left var(--d-sp-def) var(--sp-def),width var(--d-sp-def) var(--sp-def),background var(--d-ef-def) var(--ef-def)}
+.seg{position:relative;z-index:1;border:0;background:none;padding:0 12px;height:30px;border-radius:999px;cursor:pointer;
+  font:inherit;font-size:12px;font-weight:700;color:var(--on-surface-variant);transition:color var(--d-ef-fast) var(--ef-fast)}
+.seg.on{color:var(--on-primary-container)}
 /* ============ Apple iOS-inspired theme (web approximation) ============ */
 html.ios{
   --primary:#0A84FF; --on-primary:#FFFFFF; --primary-container:#D6E9FE; --on-primary-container:#04294E;
@@ -247,10 +254,11 @@ html.ios .fab{border-radius:999px;background:var(--primary);color:#fff}
 html.ios .fab:active{border-radius:999px}
 html.ios .story .ring{background:conic-gradient(from 210deg,#0A84FF,#5E5CE6,#0A84FF)}
 html.ios .sheet{border-radius:14px 14px 0 0}
+html.ios .segtheme{background:var(--surface-container-highest)}
+html.ios .segpill{background:#FFFFFF;box-shadow:0 1px 3px rgba(0,0,0,.18)}
+html.ios .seg.on{color:var(--on-surface)}
 html.ios .act.on{color:var(--primary)}
 html.ios .postbtn,html.ios .cinput button,html.ios .audio button{background:var(--primary)}
-/* style menu check marks */
-#stylemenu button .msr{font-size:20px;color:var(--primary)}
 /* theme morph: view-transition glide + color/radius cross-glide */
 ::view-transition-old:root{animation:vt-out .42s cubic-bezier(0.32,0.72,0,1) both}
 ::view-transition-new:root{animation:vt-in .42s cubic-bezier(0.32,0.72,0,1) both}
@@ -265,8 +273,11 @@ html.theming *{transition:background-color .45s ease,color .45s ease,border-colo
 <div class="phone">
   <header class="topbar">
     <div class="title">One Feed</div>
-    <span class="m3badge" id="m3badge">Material 3</span>
-    <button class="iconbtn" aria-label="Style" onclick="openStyleMenu(event)"><span class="msr">palette</span></button>
+    <div class="segtheme" role="tablist" aria-label="Design style">
+      <span class="segpill" id="segpill"></span>
+      <button class="seg on" id="seg-g" role="tab" onclick="setTheme('google')">Google</button>
+      <button class="seg" id="seg-a" role="tab" onclick="setTheme('ios')">Apple</button>
+    </div>
     <button class="iconbtn" aria-label="Search" onclick="toggleSearch()"><span class="msr">search</span></button>
     <img class="avatar-s" src="https://picsum.photos/seed/ofme/64/64" alt="">
   </header>
@@ -324,10 +335,6 @@ html.theming *{transition:background-color .45s ease,color .45s ease,border-colo
     <img id="vimg" src="" alt="">
   </div>
 
-  <div class="menu" id="stylemenu" hidden>
-    <button onclick="setTheme('google')"><span class="msr" id="ck-google">check</span>Google Material 3</button>
-    <button onclick="setTheme('ios')"><span class="msr" id="ck-ios">check</span>Apple iOS style</button>
-  </div>
   <div class="menu" id="menu" hidden>
     <button onclick="menuHide()"><span class="msr">visibility_off</span>Hide this post</button>
     <button onclick="menuCopy()"><span class="msr">content_copy</span>Copy post text</button>
@@ -677,23 +684,17 @@ let theme='google';
 try{theme=localStorage.getItem('onefeed-theme')||'google';}catch(e){}
 function applyThemeClass(){document.documentElement.classList.toggle('ios',theme==='ios');}
 function syncThemeUI(){
-  $('#ck-google').style.visibility=theme==='google'?'visible':'hidden';
-  $('#ck-ios').style.visibility=theme==='ios'?'visible':'hidden';
-  $('#m3badge').textContent=theme==='ios'?'iOS style':'Material 3';
-  $('#motionnote').textContent=theme==='ios'
+  const ios=theme==='ios';
+  $('#seg-g').classList.toggle('on',!ios);
+  $('#seg-a').classList.toggle('on',ios);
+  const act=ios?$('#seg-a'):$('#seg-g');
+  const pill=$('#segpill');
+  pill.style.left=act.offsetLeft+'px';pill.style.width=act.offsetWidth+'px';
+  $('#motionnote').textContent=ios
     ?'Motion: iOS-style web easing (web approximation, not UIKit).'
     :'Motion: Material 3 web curves.';
 }
-function openStyleMenu(e){
-  e.stopPropagation();
-  const m=$('#stylemenu');m.hidden=false;syncThemeUI();
-  const r=e.target.closest('button').getBoundingClientRect();
-  m.style.left=Math.max(8,Math.min(r.right-230,window.innerWidth-238))+'px';
-  m.style.top=(r.bottom+4)+'px';
-  setTimeout(()=>document.addEventListener('click',()=>{m.hidden=true;},{once:true}),0);
-}
 function setTheme(t){
-  $('#stylemenu').hidden=true;
   if(t===theme){syncThemeUI();return;}
   const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
   const swap=()=>{
@@ -710,6 +711,11 @@ function setTheme(t){
 }
 applyThemeClass();
 syncThemeUI();
+requestAnimationFrame(()=>syncThemeUI());
+window.addEventListener('load',()=>syncThemeUI());
+[300,1000,2500].forEach(ms=>setTimeout(()=>syncThemeUI(),ms));
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(()=>syncThemeUI())}
+if(document.fonts&&document.fonts.addEventListener){document.fonts.addEventListener('loadingdone',()=>syncThemeUI())}
 
 /* ---------- explore rows jump to their format card ---------- */
 function goFormat(k){
