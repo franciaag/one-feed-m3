@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>One Feed - Material 3 format skeleton</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0..1,0" rel="stylesheet">
+<style>
+/* ============ Material 3 tokens (baseline light scheme) ============ */
+:root{
+  --primary:#6750A4; --on-primary:#FFFFFF; --primary-container:#EADDFF; --on-primary-container:#21005D;
+  --secondary:#625B71; --secondary-container:#E8DEF8; --on-secondary-container:#1D192B;
+  --tertiary:#7D5260; --tertiary-container:#FFD8E4; --on-tertiary-container:#31111D;
+  --error:#B3261E; --error-container:#F9DEDC; --on-error-container:#410E0B;
+  --surface:#FEF7FF; --surface-dim:#DED8E1;
+  --surface-container-lowest:#FFFFFF; --surface-container-low:#F7F2FA; --surface-container:#F3EDF7;
+  --surface-container-high:#ECE6F0; --surface-container-highest:#E6E0E9;
+  --on-surface:#1D1B20; --on-surface-variant:#49454F; --outline:#79747E; --outline-variant:#CAC4D0;
+  /* M3 Expressive motion physics - official web conversion curves (m3.material.io/styles/motion) */
+  --sp-fast:cubic-bezier(0.42,1.67,0.21,0.90);  /* expressive fast spatial   350ms */
+  --sp-def:cubic-bezier(0.38,1.21,0.22,1.00);   /* expressive default spatial 500ms */
+  --sp-slow:cubic-bezier(0.39,1.29,0.35,0.98);  /* expressive slow spatial   650ms */
+  --ef-fast:cubic-bezier(0.31,0.94,0.34,1.00);  /* expressive fast effects   150ms */
+  --ef-def:cubic-bezier(0.34,0.80,0.34,1.00);   /* expressive default effects 200ms */
+  --ef-slow:cubic-bezier(0.34,0.88,0.34,1.00);  /* expressive slow effects   300ms */
+  --d-sp-fast:350ms; --d-sp-def:500ms; --d-sp-slow:650ms; --d-ef-fast:150ms; --d-ef-def:200ms; --d-ef-slow:300ms;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{font-family:'Roboto',system-ui,sans-serif;background:var(--surface);color:var(--on-surface);
+  display:flex;justify-content:center;min-height:100dvh}
+.msr{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;line-height:1;
+  letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;
+  -webkit-font-smoothing:antialiased;user-select:none}
+.phone{width:100%;max-width:480px;min-height:100dvh;background:var(--surface);position:relative;
+  padding-bottom:calc(80px + env(safe-area-inset-bottom,0px))}
+
+/* ============ M3 small top app bar (64dp) ============ */
+.topbar{position:sticky;top:0;z-index:40;height:64px;display:flex;align-items:center;gap:8px;
+  padding:0 16px;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(12px)}
+.topbar .title{font-size:22px;font-weight:500;letter-spacing:0;line-height:28px;flex:1}
+.m3badge{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--on-primary-container);
+  background:var(--primary-container);padding:4px 10px;border-radius:999px}
+.iconbtn{width:48px;height:48px;border:0;background:none;border-radius:999px;display:grid;place-items:center;
+  color:var(--on-surface-variant);cursor:pointer;transition:background var(--d-ef-fast) var(--ef-fast)}
+.iconbtn:active{background:var(--surface-container-highest)}
+.iconbtn .msr{font-size:24px}
+.avatar-s{width:32px;height:32px;border-radius:999px;object-fit:cover}
+
+/* ============ honesty strip ============ */
+.demo-strip{margin:4px 16px 12px;display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;
+  background:var(--tertiary-container);color:var(--on-tertiary-container);font-size:12px;font-weight:500;line-height:16px}
+.demo-strip .msr{font-size:18px}
+
+/* ============ stories rail (Snapchat 2013 lineage) ============ */
+.stories{display:flex;gap:12px;overflow-x:auto;padding:4px 16px 16px;scrollbar-width:none}
+.stories::-webkit-scrollbar{display:none}
+.story{flex:0 0 64px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;background:none;border:0}
+.story .ring{width:64px;height:64px;border-radius:999px;padding:3px;
+  background:conic-gradient(from 210deg,var(--primary),var(--tertiary),var(--primary));
+  transition:transform var(--d-sp-fast) var(--sp-fast)}
+.story:active .ring{transform:scale(.92)}
+.story .ring img{width:100%;height:100%;border-radius:999px;object-fit:cover;border:2.5px solid var(--surface);display:block}
+.story span{font-size:11px;font-weight:500;color:var(--on-surface-variant);max-width:64px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ============ feed cards (4dp grid, 16dp margins, 12dp radius) ============ */
+.feed{display:flex;flex-direction:column;gap:16px;padding:0 16px 24px}
+.card{background:var(--surface-container-low);border-radius:16px;overflow:hidden;position:relative;
+  transition:transform var(--d-sp-fast) var(--sp-fast),box-shadow var(--d-ef-def) var(--ef-def)}
+.card:active{transform:scale(.985)}
+.card-head{display:flex;align-items:center;gap:12px;padding:12px 16px 8px}
+.card-head img{width:40px;height:40px;border-radius:999px;object-fit:cover}
+.card-id{flex:1;min-width:0}
+.card-id .n{font-size:14px;font-weight:700;line-height:20px}
+.card-id .h{font-size:12px;color:var(--on-surface-variant);line-height:16px}
+.card-body{padding:0 16px 8px;font-size:14px;line-height:20px}
+.card-media{position:relative;background:var(--surface-container-highest)}
+.card-media img,.card-media video{width:100%;display:block;object-fit:cover}
+.actions{display:flex;align-items:center;padding:4px 8px 8px}
+.act{display:flex;align-items:center;gap:4px;min-width:64px;height:48px;padding:0 8px;border:0;background:none;
+  border-radius:999px;cursor:pointer;color:var(--on-surface-variant);
+  transition:color var(--d-ef-fast) var(--ef-fast),background var(--d-ef-fast) var(--ef-fast)}
+.act:active{background:var(--surface-container-high)}
+.act .msr{font-size:22px;transition:transform var(--d-sp-fast) var(--sp-fast),font-variation-settings var(--d-ef-fast) var(--ef-fast)}
+.act.on{color:var(--error)}
+.act.on .msr{font-variation-settings:'FILL' 1;transform:scale(1.15)}
+.act small{font-size:12px;font-weight:500}
+.lineage{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--on-secondary-container);background:var(--secondary-container);border-radius:6px;padding:3px 8px;margin:0 16px 10px}
+.lineage.dead{background:var(--error-container);color:var(--on-error-container)}
+
+/* format-specific */
+.tw body, .card.tw .card-body{font-size:15px;line-height:22px}
+.ratio-1x1{aspect-ratio:1/1}.ratio-16x9{aspect-ratio:16/9}.ratio-4x5{aspect-ratio:4/5}
+.play-fab{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}
+.play-fab span{width:64px;height:64px;border-radius:999px;background:rgba(29,27,32,.6);color:#fff;display:grid;place-items:center;backdrop-filter:blur(4px)}
+.play-fab .msr{font-size:36px;font-variation-settings:'FILL' 1}
+.dur{position:absolute;right:8px;bottom:8px;background:rgba(29,27,32,.75);color:#fff;font-size:11px;font-weight:500;padding:3px 8px;border-radius:6px}
+.reel{aspect-ratio:9/14;position:relative}
+.reel .rail{position:absolute;right:8px;bottom:16px;display:flex;flex-direction:column;gap:12px}
+.reel .rail .act{flex-direction:column;min-width:48px;color:#fff;gap:2px}
+.reel video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.reel .grad{position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(0,0,0,.55));pointer-events:none}
+.reel .cap{position:absolute;left:16px;right:72px;bottom:16px;color:#fff;font-size:13px;line-height:18px;font-weight:500}
+.linkcard{margin:0 16px 8px;border:1px solid var(--outline-variant);border-radius:12px;overflow:hidden;display:block;text-decoration:none;color:inherit}
+.linkcard img{width:100%;aspect-ratio:1.91/1;object-fit:cover;display:block}
+.linkcard .lt{padding:12px;font-size:13px;font-weight:500;line-height:18px}
+.linkcard .ls{padding:0 12px 12px;font-size:12px;color:var(--on-surface-variant)}
+.carousel{position:relative}
+.carousel .track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
+.carousel .track::-webkit-scrollbar{display:none}
+.carousel .track img{flex:0 0 100%;scroll-snap-align:center;aspect-ratio:1/1;object-fit:cover}
+.dots{position:absolute;left:0;right:0;bottom:12px;display:flex;justify-content:center;gap:6px}
+.dots i{width:6px;height:6px;border-radius:999px;background:rgba(255,255,255,.55);transition:all var(--d-ef-def) var(--ef-def)}
+.dots i.on{background:#fff;width:16px}
+.poll{margin:0 16px 10px;display:flex;flex-direction:column;gap:8px}
+.opt{position:relative;border:1px solid var(--outline-variant);border-radius:999px;padding:0;height:40px;overflow:hidden;cursor:pointer;background:none;width:100%;text-align:left}
+.opt .fill{position:absolute;inset:0;width:0;background:var(--primary-container);transition:width var(--d-sp-def) var(--sp-def)}
+.opt .lbl{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:center;height:100%;padding:0 16px;font-size:13px;font-weight:500;color:var(--on-surface)}
+.audio{margin:0 16px 10px;background:var(--surface-container-high);border-radius:12px;padding:12px;display:flex;align-items:center;gap:12px}
+.audio button{width:48px;height:48px;border-radius:999px;border:0;background:var(--primary);color:var(--on-primary);display:grid;place-items:center;cursor:pointer;flex:0 0 48px}
+.audio button .msr{font-size:26px;font-variation-settings:'FILL' 1}
+.wave{flex:1;display:flex;align-items:center;gap:2px;height:40px}
+.wave i{flex:1;background:var(--outline-variant);border-radius:2px;min-width:2px}
+.wave i.played{background:var(--primary)}
+.article .card-body .hed{font-size:18px;font-weight:700;line-height:24px;margin-bottom:4px}
+.article .card-body .dek{color:var(--on-surface-variant);font-size:13px}
+.article .readtime{display:flex;align-items:center;gap:4px;padding:0 16px 10px;font-size:11px;color:var(--on-surface-variant);font-weight:500}
+.price{position:absolute;left:12px;bottom:12px;background:var(--primary);color:var(--on-primary);font-size:16px;font-weight:700;padding:6px 14px;border-radius:999px}
+.event{display:flex;gap:16px;margin:0 16px 10px;align-items:center}
+.event .date{flex:0 0 64px;height:64px;border-radius:12px;background:var(--primary-container);color:var(--on-primary-container);
+  display:flex;flex-direction:column;align-items:center;justify-content:center}
+.event .date b{font-size:20px;line-height:22px}.event .date span{font-size:10px;font-weight:700;letter-spacing:.1em}
+.event .ed .t{font-size:14px;font-weight:700;line-height:20px}.event .ed .w{font-size:12px;color:var(--on-surface-variant)}
+
+/* ============ M3 navigation bar (80dp) ============ */
+.navbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:calc(80px + env(safe-area-inset-bottom,0px));
+  background:var(--surface-container);display:flex;align-items:flex-start;padding:12px 8px 0;z-index:40;
+  box-shadow:0 -1px 0 var(--outline-variant)}
+.navitem{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;border:0;background:none;cursor:pointer;padding:0}
+.navitem .pill{width:64px;height:32px;border-radius:999px;display:grid;place-items:center;color:var(--on-surface-variant);
+  transition:background var(--d-ef-def) var(--ef-def),color var(--d-ef-def) var(--ef-def)}
+.navitem .pill .msr{font-size:24px;transition:transform var(--d-sp-fast) var(--sp-fast)}
+.navitem.on .pill{background:var(--secondary-container);color:var(--on-secondary-container)}
+.navitem.on .pill .msr{transform:scale(1.08)}
+.navitem span{font-size:12px;font-weight:500;color:var(--on-surface-variant)}
+.navitem.on span{color:var(--on-surface);font-weight:700}
+
+/* ============ M3 FAB (56dp, 16dp radius) ============ */
+.fab{position:fixed;right:16px;bottom:calc(96px + env(safe-area-inset-bottom,0px));width:56px;height:56px;border-radius:16px;
+  border:0;background:var(--primary-container);color:var(--on-primary-container);display:grid;place-items:center;cursor:pointer;z-index:45;
+  box-shadow:0 3px 6px rgba(0,0,0,.2),0 6px 12px rgba(0,0,0,.14);
+  transition:transform var(--d-sp-fast) var(--sp-fast),border-radius var(--d-sp-def) var(--sp-def)}
+.fab:active{transform:scale(.88);border-radius:999px}
+.fab .msr{font-size:24px}
+
+/* ============ M3 bottom sheet ============ */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:50;opacity:0;pointer-events:none;transition:opacity var(--d-ef-slow) var(--ef-slow)}
+.scrim.open{opacity:1;pointer-events:auto}
+.sheet{position:fixed;bottom:0;left:50%;width:100%;max-width:480px;z-index:51;background:var(--surface-container-low);
+  border-radius:28px 28px 0 0;padding:12px 24px calc(24px + env(safe-area-inset-bottom,0px));
+  transform:translate(-50%,105%);transition:transform var(--d-sp-slow) var(--sp-slow)}
+.sheet.open{transform:translate(-50%,0)}
+.sheet .handle{width:32px;height:4px;border-radius:999px;background:var(--outline-variant);margin:0 auto 16px}
+.sheet h2{font-size:22px;font-weight:500;line-height:28px;margin-bottom:4px}
+.sheet p{font-size:12px;color:var(--on-surface-variant);margin-bottom:16px}
+.fmtgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.fmt{border:0;background:var(--surface-container);border-radius:12px;padding:12px 4px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;
+  transition:background var(--d-ef-fast) var(--ef-fast),transform var(--d-sp-fast) var(--sp-fast)}
+.fmt:active{transform:scale(.9);background:var(--surface-container-high)}
+.fmt .msr{font-size:26px;color:var(--primary)}
+.fmt span{font-size:10px;font-weight:500;color:var(--on-surface-variant)}
+
+/* ============ story viewer ============ */
+.viewer{position:fixed;inset:0;z-index:60;background:#000;display:none;flex-direction:column}
+.viewer.open{display:flex}
+.viewer img{flex:1;object-fit:cover;width:100%}
+.viewer .prog{position:absolute;top:calc(8px + env(safe-area-inset-top,0px));left:8px;right:8px;height:3px;border-radius:999px;background:rgba(255,255,255,.3);overflow:hidden}
+.viewer .prog i{display:block;height:100%;width:0;background:#fff;border-radius:999px}
+.viewer .vhead{position:absolute;top:calc(20px + env(safe-area-inset-top,0px));left:16px;right:16px;display:flex;align-items:center;gap:10px;color:#fff}
+.viewer .vhead img{width:32px;height:32px;border-radius:999px}
+.viewer .vhead b{font-size:13px}
+.viewer .vclose{position:absolute;top:calc(16px + env(safe-area-inset-top,0px));right:12px;color:#fff;z-index:2}
+
+/* toast */
+.toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);z-index:55;
+  background:var(--on-surface);color:var(--surface);font-size:13px;font-weight:500;padding:10px 20px;border-radius:999px;
+  opacity:0;pointer-events:none;transition:opacity var(--d-ef-def) var(--ef-def),transform var(--d-sp-fast) var(--sp-fast)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* card insert animation (expressive default spatial) */
+@keyframes cardIn{from{opacity:0;transform:translateY(28px) scale(.96)}to{opacity:1;transform:none}}
+.card.in{animation:cardIn var(--d-sp-def) var(--sp-def)}
+/* tab cross-fade (fade-through, expressive effects) */
+@keyframes paneIn{from{opacity:0}to{opacity:1}}
+.pane.in{animation:paneIn var(--d-ef-slow) var(--ef-slow)}
+@media (prefers-reduced-motion:reduce){*{animation-duration:1ms!important;transition-duration:1ms!important}}
+</style>
+</head>
+<body>
+<div class="phone">
+  <header class="topbar">
+    <div class="title">One Feed</div>
+    <span class="m3badge">Material 3</span>
+    <button class="iconbtn" aria-label="Search" onclick="toast('Search is not part of this skeleton')"><span class="msr">search</span></button>
+    <img class="avatar-s" src="https://picsum.photos/seed/ofme/64/64" alt="">
+  </header>
+
+  <div class="demo-strip"><span class="msr">science</span><span>Format skeleton - sample content, no accounts connected. Motion: M3 Expressive physics curves.</span></div>
+
+  <div class="pane in" id="pane-home">
+    <div class="stories" id="stories"></div>
+    <div class="feed" id="feed"></div>
+  </div>
+
+  <div class="pane" id="pane-explore" hidden>
+    <div class="feed" id="explore"></div>
+  </div>
+
+  <button class="fab" id="fab" aria-label="Compose"><span class="msr">add</span></button>
+
+  <nav class="navbar" id="navbar">
+    <button class="navitem on" data-pane="pane-home"><span class="pill"><span class="msr">home</span></span><span>Home</span></button>
+    <button class="navitem" data-pane="pane-explore"><span class="pill"><span class="msr">explore</span></span><span>Explore</span></button>
+    <button class="navitem" data-pane="pane-home" data-toast="Alerts are not part of this skeleton"><span class="pill"><span class="msr">notifications</span></span><span>Alerts</span></button>
+    <button class="navitem" data-pane="pane-home" data-toast="Profile is not part of this skeleton"><span class="pill"><span class="msr">person</span></span><span>Profile</span></button>
+  </nav>
+
+  <div class="scrim" id="scrim"></div>
+  <div class="sheet" id="sheet" role="dialog" aria-label="Compose">
+    <div class="handle"></div>
+    <h2>New post</h2>
+    <p>Pick a format. A sample card drops into the feed - skeleton demo, nothing is posted anywhere.</p>
+    <div class="fmtgrid" id="fmtgrid"></div>
+  </div>
+
+  <div class="viewer" id="viewer">
+    <div class="prog"><i id="progi"></i></div>
+    <div class="vhead"><img id="vava" src="" alt=""><b id="vname"></b></div>
+    <button class="iconbtn vclose" id="vclose"><span class="msr">close</span></button>
+    <img id="vimg" src="" alt="">
+  </div>
+
+  <div class="toast" id="toastel"></div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+const spFast=getComputedStyle(document.documentElement).getPropertyValue('--sp-fast');
+
+/* ---------- sample people ---------- */
+const P=[
+ {n:'Ada Voss',h:'@adavoss',a:'https://picsum.photos/seed/av1/96/96'},
+ {n:'Ken Ito',h:'@kenito',a:'https://picsum.photos/seed/ki2/96/96'},
+ {n:'Mara Quinn',h:'@maraq',a:'https://picsum.photos/seed/mq3/96/96'},
+ {n:'Leo Park',h:'@leopark',a:'https://picsum.photos/seed/lp4/96/96'},
+ {n:'Iris Vale',h:'@irisvale',a:'https://picsum.photos/seed/iv5/96/96'},
+ {n:'Noah Reyes',h:'@noahreyes',a:'https://picsum.photos/seed/nr6/96/96'},
+ {n:'Sana Okafor',h:'@sanao',a:'https://picsum.photos/seed/so7/96/96'},
+ {n:'Tom Ash',h:'@tomash',a:'https://picsum.photos/seed/ta8/96/96'},
+];
+
+/* ---------- stories ---------- */
+const storiesEl=$('#stories');
+P.forEach((p,i)=>{
+  const b=document.createElement('button');b.className='story';
+  b.innerHTML=`<span class="ring"><img src="${p.a}" alt=""></span><span>${p.n.split(' ')[0]}</span>`;
+  b.onclick=()=>openStory(i);storiesEl.appendChild(b);
+});
+let vTimer=null;
+function openStory(i){
+  const v=$('#viewer');$('#vimg').src=`https://picsum.photos/seed/story${i}/720/1280`;
+  $('#vava').src=P[i].a;$('#vname').textContent=P[i].n;
+  v.classList.add('open');
+  const bar=$('#progi');bar.style.transition='none';bar.style.width='0';
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    bar.style.transition='width 5s linear';bar.style.width='100%';
+  }));
+  clearTimeout(vTimer);vTimer=setTimeout(closeStory,5000);
+}
+function closeStory(){$('#viewer').classList.remove('open');clearTimeout(vTimer);}
+$('#vclose').onclick=closeStory;
+$('#viewer').onclick=e=>{if(e.target.id==='vimg'||e.target.id==='viewer')closeStory();};
+
+/* ---------- format templates ---------- */
+function head(p,sub){return `<div class="card-head"><img src="${p.a}" alt=""><div class="card-id"><div class="n">${p.n}</div><div class="h">${p.h} · ${sub}</div></div><button class="iconbtn" onclick="toast('Options are not part of this skeleton')"><span class="msr">more_vert</span></button></div>`;}
+function actions(l,c,r){return `<div class="actions">
+  <button class="act" data-k="like" onclick="toggleAct(this,'favorite',${l})"><span class="msr">favorite</span><small>${l}</small></button>
+  <button class="act" onclick="toast('Comments open in the full app')"><span class="msr">mode_comment</span><small>${c}</small></button>
+  <button class="act" data-k="re" onclick="toggleAct(this,'repeat',${r})"><span class="msr">repeat</span><small>${r}</small></button>
+  <button class="act" onclick="toast('Share sheet opens in the full app')"><span class="msr">share</span></button></div>`;}
+function lin(t,dead){return `<span class="lineage${dead?' dead':''}">${t}</span>`;}
+
+const FORMATS={
+ text:{icon:'chat_bubble',label:'Text',make:()=>`<div class="card in tw">${head(P[0],'2h')}
+   <div class="card-body">Shipped the M3 motion pass today. Springs over keyframes - everything interrupts and retargets cleanly. This sample post shows how a short text-first post sits in the unified feed.</div>
+   ${actions(214,32,48)}${lin('Format seen on: Twitter · Bluesky · Threads')}</div>`},
+ photo:{icon:'photo_library',label:'Photo',make:()=>`<div class="card in">${head(P[1],'4h')}
+   <div class="card-media ratio-1x1"><img src="https://picsum.photos/seed/photo1/800/800" alt=""></div>
+   <div class="card-body" style="padding-top:8px">Golden hour test roll. Single-image post format.</div>
+   ${actions(1204,88,12)}${lin('Format seen on: Instagram · Flickr')}</div>`},
+ video:{icon:'smart_display',label:'Video',make:()=>`<div class="card in">${head(P[2],'6h')}
+   <div class="card-media ratio-16x9"><video src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" poster="https://picsum.photos/seed/vid1/800/450" preload="none" controls playsinline></video></div>
+   <div class="card-body" style="padding-top:8px">Long-form horizontal video with real playback.</div>
+   ${actions(8600,412,900)}${lin('Format seen on: YouTube · Vimeo')}</div>`},
+ reel:{icon:'movie',label:'Reel',make:()=>`<div class="card in">
+   <div class="card-media reel"><video src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4" poster="https://picsum.photos/seed/reel1/720/1120" preload="metadata" loop muted playsinline></video>
+   <div class="grad"></div>
+   <div class="cap">Vertical short video. Tap to play - this one really plays.</div>
+   <div class="rail">
+     <button class="act" onclick="toggleAct(this,'favorite',99)"><span class="msr">favorite</span><small>99</small></button>
+     <button class="act" onclick="toast('Comments open in the full app')"><span class="msr">mode_comment</span><small>12</small></button>
+     <button class="act" onclick="toast('Share sheet opens in the full app')"><span class="msr">share</span></button></div></div>
+   <div class="card-body" style="padding-top:8px"><b>Leo Park</b> · short vertical clip format, tap-to-play.</div>
+   ${lin('Format seen on: Vine (retired) · TikTok · Reels')}</div>`},
+ link:{icon:'link',label:'Link',make:()=>`<div class="card in">${head(P[4],'8h')}
+   <div class="card-body">Worth your morning: a deep dive on spring physics in interface design.</div>
+   <a class="linkcard" href="https://m3.material.io/styles/motion/overview" target="_blank" rel="noopener">
+     <img src="https://picsum.photos/seed/link1/764/400" alt="">
+     <div class="lt">Motion - Material Design 3</div>
+     <div class="ls">m3.material.io</div></a>
+   ${actions(96,7,21)}${lin('Format seen on: Facebook · Google+ (retired)')}</div>`},
+ carousel:{icon:'photo_library',label:'Carousel',make:()=>`<div class="card in">${head(P[5],'12h')}
+   <div class="card-body">Set from the studio visit - swipe through. Multi-photo swipe carousel.</div>
+   <div class="card-media carousel"><div class="track" onscroll="dotSync(this)">
+     <img src="https://picsum.photos/seed/car1/800/800" alt=""><img src="https://picsum.photos/seed/car2/800/800" alt=""><img src="https://picsum.photos/seed/car3/800/800" alt=""></div>
+     <div class="dots"><i class="on"></i><i></i><i></i></div></div>
+   ${actions(457,61,9)}${lin('Format seen on: Instagram · LinkedIn')}</div>`},
+ poll:{icon:'poll',label:'Poll',make:()=>`<div class="card in">${head(P[6],'1d')}
+   <div class="card-body">Best time to ship a redesign?</div>
+   <div class="poll" data-votes="128,86,44">
+     <button class="opt" onclick="vote(this)"><span class="fill"></span><span class="lbl"><span>Quiet Tuesday</span><b></b></span></button>
+     <button class="opt" onclick="vote(this)"><span class="fill"></span><span class="lbl"><span>Friday afternoon</span><b></b></span></button>
+     <button class="opt" onclick="vote(this)"><span class="fill"></span><span class="lbl"><span>Never, only iterate</span><b></b></span></button></div>
+   <div class="readtime" style="padding:0 16px 10px"><span class="msr" style="font-size:16px">how_to_vote</span> 258 votes · 2 days left · local demo vote</div>
+   ${actions(86,45,3)}${lin('Format seen on: Twitter polls · Mastodon')}</div>`},
+ audio:{icon:'music_note',label:'Audio',make:()=>`<div class="card in">${head(P[7],'1d')}
+   <div class="card-body">Demo track from the weekend session. Real audio playback in a compact player card.</div>
+   <div class="audio"><button onclick="playAudio(this)" aria-label="Play"><span class="msr">play_arrow</span></button>
+     <div class="wave">${Array.from({length:36},(_,i)=>`<i style="height:${20+Math.round(18*Math.abs(Math.sin(i*.7)))}px"></i>`).join('')}</div></div>
+   <audio src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3" preload="none"></audio>
+   ${actions(230,18,34)}${lin('Format seen on: SoundCloud · MySpace (retired)')}</div>`},
+ article:{icon:'article',label:'Article',make:()=>`<div class="card in article">${head(P[0],'2d')}
+   <div class="card-media ratio-16x9"><img src="https://picsum.photos/seed/art1/800/450" alt=""></div>
+   <div class="card-body" style="padding-top:12px"><div class="hed">Why every feed converged on the same five formats</div>
+   <div class="dek">Long-form reading card - title, dek, hero image, reading time.</div></div>
+   <div class="readtime"><span class="msr" style="font-size:16px">schedule</span> 8 min read</div>
+   ${actions(512,140,77)}${lin('Format seen on: Medium · Blogger')}</div>`},
+ market:{icon:'storefront',label:'Listing',make:()=>`<div class="card in">${head(P[3],'3d')}
+   <div class="card-media ratio-4x5"><img src="https://picsum.photos/seed/mkt1/720/900" alt=""><span class="price">$240</span></div>
+   <div class="card-body" style="padding-top:8px">Walnut desk, great condition, pickup only. Classified listing format with price tag.</div>
+   ${actions(41,23,2)}${lin('Format seen on: Craigslist · FB Marketplace')}</div>`},
+ event:{icon:'event',label:'Event',make:()=>`<div class="card in">${head(P[5],'4d')}
+   <div class="event"><div class="date"><b>14</b><span>NOV</span></div>
+   <div class="ed"><div class="t">Design systems meetup - motion night</div><div class="w">Fri 7:00 PM · 86 going · Riverside Hall</div></div></div>
+   ${actions(58,19,6)}${lin('Format seen on: Meetup · FB Events')}</div>`},
+};
+
+/* ---------- build feed ---------- */
+const order=['text','photo','video','reel','link','carousel','poll','audio','article','market','event'];
+const feed=$('#feed');
+order.forEach(k=>{const t=document.createElement('template');t.innerHTML=FORMATS[k].make().trim();const c=t.content.firstChild;c.classList.remove('in');feed.appendChild(c);});
+
+/* explore pane: format index */
+const ex=$('#explore');
+ex.innerHTML=Object.keys(FORMATS).map((k,i)=>`<div class="card" style="padding:16px;display:flex;align-items:center;gap:12px">
+  <span class="msr" style="color:var(--primary);font-size:28px">${FORMATS[k].icon}</span>
+  <div style="flex:1"><div style="font-size:14px;font-weight:700">${FORMATS[k].label}</div>
+  <div style="font-size:11px;color:var(--on-surface-variant)">Format ${String(i+1).padStart(2,'0')} of ${Object.keys(FORMATS).length}</div></div>
+  <span class="msr" style="color:var(--outline)">chevron_right</span></div>`).join('');
+
+/* ---------- interactions (real, local) ---------- */
+function toggleAct(btn,icon,n){
+  const on=btn.classList.toggle('on');
+  const sm=btn.querySelector('small');if(sm)sm.textContent=n+(on?1:0);
+}
+function dotSync(track){
+  const dots=track.parentElement.querySelectorAll('.dots i');
+  const i=Math.round(track.scrollLeft/track.clientWidth);
+  dots.forEach((d,j)=>d.classList.toggle('on',j===i));
+}
+function vote(btn){
+  const poll=btn.parentElement;if(poll.dataset.done)return;poll.dataset.done='1';
+  const votes=poll.dataset.votes.split(',').map(Number);const total=votes.reduce((a,b)=>a+b,0)+1;
+  [...poll.children].forEach((o,i)=>{
+    const v=votes[i]+(o===btn?1:0);const pct=Math.round(v/total*100);
+    o.querySelector('.fill').style.width=pct+'%';o.querySelector('b').textContent=pct+'%';
+  });
+}
+let audioCtx={el:null,btn:null};
+function playAudio(btn){
+  const card=btn.closest('.card');const au=card.querySelector('audio');
+  const ic=btn.querySelector('.msr');
+  if(audioCtx.el&&audioCtx.el!==au){audioCtx.el.pause();audioCtx.btn.querySelector('.msr').textContent='play_arrow';}
+  if(au.paused){au.play();ic.textContent='pause';audioCtx={el:au,btn};
+    au.ontimeupdate=()=>{const p=au.currentTime/au.duration||0;const bars=card.querySelectorAll('.wave i');
+      bars.forEach((b,i)=>b.classList.toggle('played',i/bars.length<p));};
+    au.onended=()=>{ic.textContent='play_arrow';};
+  }else{au.pause();ic.textContent='play_arrow';}
+}
+function toast(msg){const t=$('#toastel');t.textContent=msg;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),1800);}
+
+/* reel tap-to-play (real) */
+document.addEventListener('click',e=>{
+  const reel=e.target.closest('.reel');if(!reel||e.target.closest('.act'))return;
+  const v=reel.querySelector('video');v.paused?v.play():v.pause();
+});
+
+/* ---------- nav bar with sliding indicator ---------- */
+document.querySelectorAll('.navitem').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.navitem').forEach(x=>x.classList.toggle('on',x===b));
+  if(b.dataset.toast){toast(b.dataset.toast);return;}
+  document.querySelectorAll('.pane').forEach(p=>{const show=p.id===b.dataset.pane;
+    if(show){p.hidden=false;p.classList.remove('in');void p.offsetWidth;p.classList.add('in');}else p.hidden=true;});
+}));
+
+/* ---------- compose sheet ---------- */
+const grid=$('#fmtgrid');
+Object.keys(FORMATS).forEach(k=>{
+  const b=document.createElement('button');b.className='fmt';
+  b.innerHTML=`<span class="msr">${FORMATS[k].icon}</span><span>${FORMATS[k].label}</span>`;
+  b.onclick=()=>{closeSheet();addCard(k);};
+  grid.appendChild(b);
+});
+const sheet=$('#sheet'),scrim=$('#scrim');
+$('#fab').onclick=()=>{sheet.classList.add('open');scrim.classList.add('open');};
+function closeSheet(){sheet.classList.remove('open');scrim.classList.remove('open');}
+scrim.onclick=closeSheet;
+function addCard(k){
+  const t=document.createElement('template');t.innerHTML=FORMATS[k].make().trim();const c=t.content.firstChild;
+  feed.prepend(c);c.scrollIntoView({behavior:'smooth',block:'center'});
+  toast(`Sample ${FORMATS[k].label.toLowerCase()} card added - skeleton only`);
+}
+</script>
+</body>
+</html>
