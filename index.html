@@ -51,12 +51,12 @@ body{font-family:'Roboto',system-ui,sans-serif;background:var(--surface);color:v
 .avatar-s{width:32px;height:32px;border-radius:999px;object-fit:cover}
 
 /* ============ honesty strip ============ */
-.demo-strip{margin:4px 16px 12px;display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;
-  background:var(--tertiary-container);color:var(--on-tertiary-container);font-size:12px;font-weight:500;line-height:16px}
+.demo-strip{margin:2px 12px 10px;display:flex;align-items:center;gap:8px;padding:5px 10px;border-radius:10px;
+  background:var(--surface-container-high);color:var(--on-surface-variant);font-size:11px;font-weight:500;line-height:14px}
 .demo-strip .msr{font-size:18px}
 
 /* ============ stories rail (Snapchat 2013 lineage) ============ */
-.stories{display:flex;gap:12px;overflow-x:auto;padding:4px 16px 16px;scrollbar-width:none}
+.stories{display:flex;gap:10px;overflow-x:auto;padding:2px 12px 12px;scrollbar-width:none}
 .stories::-webkit-scrollbar{display:none}
 .story{flex:0 0 64px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;background:none;border:0}
 .story .ring{width:64px;height:64px;border-radius:999px;padding:3px;
@@ -67,19 +67,19 @@ body{font-family:'Roboto',system-ui,sans-serif;background:var(--surface);color:v
 .story span{font-size:11px;font-weight:500;color:var(--on-surface-variant);max-width:64px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 /* ============ feed cards (4dp grid, 16dp margins, 12dp radius) ============ */
-.feed{display:flex;flex-direction:column;gap:16px;padding:0 16px 24px}
+.feed{display:flex;flex-direction:column;gap:12px;padding:0 12px 20px}
 .card{background:var(--surface-container-low);border-radius:16px;overflow:hidden;position:relative;
   transition:transform var(--d-sp-fast) var(--sp-fast),box-shadow var(--d-ef-def) var(--ef-def)}
 .card:active{transform:scale(.985)}
-.card-head{display:flex;align-items:center;gap:12px;padding:12px 16px 8px}
+.card-head{display:flex;align-items:center;gap:10px;padding:10px 12px 6px}
 .card-head img{width:40px;height:40px;border-radius:999px;object-fit:cover}
 .card-id{flex:1;min-width:0}
 .card-id .n{font-size:14px;font-weight:700;line-height:20px}
 .card-id .h{font-size:12px;color:var(--on-surface-variant);line-height:16px}
-.card-body{padding:0 16px 8px;font-size:14px;line-height:20px}
+.card-body{padding:0 12px 4px;font-size:14px;line-height:20px}
 .card-media{position:relative;background:var(--surface-container-highest)}
 .card-media img,.card-media video{width:100%;display:block;object-fit:cover}
-.actions{display:flex;align-items:center;padding:4px 8px 8px}
+.actions{display:flex;align-items:center;padding:2px 4px 6px}
 .act{display:flex;align-items:center;gap:4px;min-width:64px;height:48px;padding:0 8px;border:0;background:none;
   border-radius:999px;cursor:pointer;color:var(--on-surface-variant);
   transition:color var(--d-ef-fast) var(--ef-fast),background var(--d-ef-fast) var(--ef-fast)}
@@ -88,9 +88,9 @@ body{font-family:'Roboto',system-ui,sans-serif;background:var(--surface);color:v
 .act.on{color:var(--error)}
 .act.on .msr{font-variation-settings:'FILL' 1;transform:scale(1.15)}
 .act small{font-size:12px;font-weight:500}
-.lineage{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
-  color:var(--on-secondary-container);background:var(--secondary-container);border-radius:6px;padding:3px 8px;margin:0 16px 10px}
-.lineage.dead{background:var(--error-container);color:var(--on-error-container)}
+.lineage{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--on-surface-variant);border:1px solid var(--outline-variant);border-radius:6px;padding:2px 7px;margin:0 12px 8px}
+.lineage.dead{color:var(--on-surface-variant)}
 
 /* format-specific */
 .tw body, .card.tw .card-body{font-size:15px;line-height:22px}
@@ -105,7 +105,7 @@ body{font-family:'Roboto',system-ui,sans-serif;background:var(--surface);color:v
 .reel video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .reel .grad{position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(0,0,0,.55));pointer-events:none}
 .reel .cap{position:absolute;left:16px;right:72px;bottom:16px;color:#fff;font-size:13px;line-height:18px;font-weight:500}
-.linkcard{margin:0 16px 8px;border:1px solid var(--outline-variant);border-radius:12px;overflow:hidden;display:block;text-decoration:none;color:inherit}
+.linkcard{margin:0 12px 6px;border:1px solid var(--outline-variant);border-radius:12px;overflow:hidden;display:block;text-decoration:none;color:inherit}
 .linkcard img{width:100%;aspect-ratio:1.91/1;object-fit:cover;display:block}
 .linkcard .lt{padding:12px;font-size:13px;font-weight:500;line-height:18px}
 .linkcard .ls{padding:0 12px 12px;font-size:12px;color:var(--on-surface-variant)}
@@ -116,11 +116,11 @@ body{font-family:'Roboto',system-ui,sans-serif;background:var(--surface);color:v
 .dots{position:absolute;left:0;right:0;bottom:12px;display:flex;justify-content:center;gap:6px}
 .dots i{width:6px;height:6px;border-radius:999px;background:rgba(255,255,255,.55);transition:all var(--d-ef-def) var(--ef-def)}
 .dots i.on{background:#fff;width:16px}
-.poll{margin:0 16px 10px;display:flex;flex-direction:column;gap:8px}
+.poll{margin:0 12px 8px;display:flex;flex-direction:column;gap:8px}
 .opt{position:relative;border:1px solid var(--outline-variant);border-radius:999px;padding:0;height:40px;overflow:hidden;cursor:pointer;background:none;width:100%;text-align:left}
 .opt .fill{position:absolute;inset:0;width:0;background:var(--primary-container);transition:width var(--d-sp-def) var(--sp-def)}
 .opt .lbl{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:center;height:100%;padding:0 16px;font-size:13px;font-weight:500;color:var(--on-surface)}
-.audio{margin:0 16px 10px;background:var(--surface-container-high);border-radius:12px;padding:12px;display:flex;align-items:center;gap:12px}
+.audio{margin:0 12px 8px;background:var(--surface-container-high);border-radius:12px;padding:12px;display:flex;align-items:center;gap:12px}
 .audio button{width:48px;height:48px;border-radius:999px;border:0;background:var(--primary);color:var(--on-primary);display:grid;place-items:center;cursor:pointer;flex:0 0 48px}
 .audio button .msr{font-size:26px;font-variation-settings:'FILL' 1}
 .wave{flex:1;display:flex;align-items:center;gap:2px;height:40px}
@@ -128,9 +128,9 @@ body{font-family:'Roboto',system-ui,sans-serif;background:var(--surface);color:v
 .wave i.played{background:var(--primary)}
 .article .card-body .hed{font-size:18px;font-weight:700;line-height:24px;margin-bottom:4px}
 .article .card-body .dek{color:var(--on-surface-variant);font-size:13px}
-.article .readtime{display:flex;align-items:center;gap:4px;padding:0 16px 10px;font-size:11px;color:var(--on-surface-variant);font-weight:500}
+.article .readtime{display:flex;align-items:center;gap:4px;padding:0 12px 8px;font-size:11px;color:var(--on-surface-variant);font-weight:500}
 .price{position:absolute;left:12px;bottom:12px;background:var(--primary);color:var(--on-primary);font-size:16px;font-weight:700;padding:6px 14px;border-radius:999px}
-.event{display:flex;gap:16px;margin:0 16px 10px;align-items:center}
+.event{display:flex;gap:12px;margin:0 12px 8px;align-items:center}
 .event .date{flex:0 0 64px;height:64px;border-radius:12px;background:var(--primary-container);color:var(--on-primary-container);
   display:flex;flex-direction:column;align-items:center;justify-content:center}
 .event .date b{font-size:20px;line-height:22px}.event .date span{font-size:10px;font-weight:700;letter-spacing:.1em}
@@ -209,7 +209,7 @@ body{font-family:'Roboto',system-ui,sans-serif;background:var(--surface);color:v
     <img class="avatar-s" src="https://picsum.photos/seed/ofme/64/64" alt="">
   </header>
 
-  <div class="demo-strip"><span class="msr">science</span><span>Format skeleton - sample content, no accounts connected. Motion: M3 Expressive physics curves.</span></div>
+  <div class="demo-strip"><span class="msr">science</span><span>Format skeleton - sample content, nothing connected. Motion: Material 3 web curves.</span></div>
 
   <div class="pane in" id="pane-home">
     <div class="stories" id="stories"></div>
@@ -220,13 +220,21 @@ body{font-family:'Roboto',system-ui,sans-serif;background:var(--surface);color:v
     <div class="feed" id="explore"></div>
   </div>
 
+  <div class="pane" id="pane-alerts" hidden>
+    <div class="feed" id="alerts"></div>
+  </div>
+
+  <div class="pane" id="pane-profile" hidden>
+    <div class="feed" id="profile"></div>
+  </div>
+
   <button class="fab" id="fab" aria-label="Compose"><span class="msr">add</span></button>
 
   <nav class="navbar" id="navbar">
     <button class="navitem on" data-pane="pane-home"><span class="pill"><span class="msr">home</span></span><span>Home</span></button>
     <button class="navitem" data-pane="pane-explore"><span class="pill"><span class="msr">explore</span></span><span>Explore</span></button>
-    <button class="navitem" data-pane="pane-home" data-toast="Alerts are not part of this skeleton"><span class="pill"><span class="msr">notifications</span></span><span>Alerts</span></button>
-    <button class="navitem" data-pane="pane-home" data-toast="Profile is not part of this skeleton"><span class="pill"><span class="msr">person</span></span><span>Profile</span></button>
+    <button class="navitem" data-pane="pane-alerts"><span class="pill"><span class="msr">notifications</span></span><span>Alerts</span></button>
+    <button class="navitem" data-pane="pane-profile"><span class="pill"><span class="msr">person</span></span><span>Profile</span></button>
   </nav>
 
   <div class="scrim" id="scrim"></div>
@@ -292,11 +300,11 @@ function actions(l,c,r){return `<div class="actions">
   <button class="act" onclick="toast('Comments open in the full app')"><span class="msr">mode_comment</span><small>${c}</small></button>
   <button class="act" data-k="re" onclick="toggleAct(this,'repeat',${r})"><span class="msr">repeat</span><small>${r}</small></button>
   <button class="act" onclick="toast('Share sheet opens in the full app')"><span class="msr">share</span></button></div>`;}
-function lin(t,dead){return `<span class="lineage${dead?' dead':''}">${t}</span>`;}
+function lin(t,dead){return `<span class="lineage">${t}</span>`;}
 
 const FORMATS={
  text:{icon:'chat_bubble',label:'Text',make:()=>`<div class="card in tw">${head(P[0],'2h')}
-   <div class="card-body">Shipped the M3 motion pass today. Springs over keyframes - everything interrupts and retargets cleanly. This sample post shows how a short text-first post sits in the unified feed.</div>
+   <div class="card-body">Slow morning, good coffee, long walk before the inbox. Sometimes the simple routine wins. (Sample text showing how a short text-first post sits in the unified feed.)</div>
    ${actions(214,32,48)}${lin('Format seen on: Twitter · Bluesky · Threads')}</div>`},
  photo:{icon:'photo_library',label:'Photo',make:()=>`<div class="card in">${head(P[1],'4h')}
    <div class="card-media ratio-1x1"><img src="https://picsum.photos/seed/photo1/800/800" alt=""></div>
@@ -315,14 +323,14 @@ const FORMATS={
      <button class="act" onclick="toast('Comments open in the full app')"><span class="msr">mode_comment</span><small>12</small></button>
      <button class="act" onclick="toast('Share sheet opens in the full app')"><span class="msr">share</span></button></div></div>
    <div class="card-body" style="padding-top:8px"><b>Leo Park</b> · short vertical clip format, tap-to-play.</div>
-   ${lin('Format seen on: Vine (retired) · TikTok · Reels')}</div>`},
+   ${lin('Format seen on: Vine · TikTok · Reels')}</div>`},
  link:{icon:'link',label:'Link',make:()=>`<div class="card in">${head(P[4],'8h')}
    <div class="card-body">Worth your morning: a deep dive on spring physics in interface design.</div>
    <a class="linkcard" href="https://m3.material.io/styles/motion/overview" target="_blank" rel="noopener">
      <img src="https://picsum.photos/seed/link1/764/400" alt="">
      <div class="lt">Motion - Material Design 3</div>
      <div class="ls">m3.material.io</div></a>
-   ${actions(96,7,21)}${lin('Format seen on: Facebook · Google+ (retired)')}</div>`},
+   ${actions(96,7,21)}${lin('Format seen on: Facebook · Google+')}</div>`},
  carousel:{icon:'photo_library',label:'Carousel',make:()=>`<div class="card in">${head(P[5],'12h')}
    <div class="card-body">Set from the studio visit - swipe through. Multi-photo swipe carousel.</div>
    <div class="card-media carousel"><div class="track" onscroll="dotSync(this)">
@@ -335,14 +343,14 @@ const FORMATS={
      <button class="opt" onclick="vote(this)"><span class="fill"></span><span class="lbl"><span>Quiet Tuesday</span><b></b></span></button>
      <button class="opt" onclick="vote(this)"><span class="fill"></span><span class="lbl"><span>Friday afternoon</span><b></b></span></button>
      <button class="opt" onclick="vote(this)"><span class="fill"></span><span class="lbl"><span>Never, only iterate</span><b></b></span></button></div>
-   <div class="readtime" style="padding:0 16px 10px"><span class="msr" style="font-size:16px">how_to_vote</span> 258 votes · 2 days left · local demo vote</div>
+   <div class="readtime" style="padding:0 12px 8px"><span class="msr" style="font-size:16px">how_to_vote</span> 258 votes · 2 days left · local demo vote</div>
    ${actions(86,45,3)}${lin('Format seen on: Twitter polls · Mastodon')}</div>`},
  audio:{icon:'music_note',label:'Audio',make:()=>`<div class="card in">${head(P[7],'1d')}
    <div class="card-body">Demo track from the weekend session. Real audio playback in a compact player card.</div>
    <div class="audio"><button onclick="playAudio(this)" aria-label="Play"><span class="msr">play_arrow</span></button>
      <div class="wave">${Array.from({length:36},(_,i)=>`<i style="height:${20+Math.round(18*Math.abs(Math.sin(i*.7)))}px"></i>`).join('')}</div></div>
    <audio src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3" preload="none"></audio>
-   ${actions(230,18,34)}${lin('Format seen on: SoundCloud · MySpace (retired)')}</div>`},
+   ${actions(230,18,34)}${lin('Format seen on: SoundCloud · MySpace')}</div>`},
  article:{icon:'article',label:'Article',make:()=>`<div class="card in article">${head(P[0],'2d')}
    <div class="card-media ratio-16x9"><img src="https://picsum.photos/seed/art1/800/450" alt=""></div>
    <div class="card-body" style="padding-top:12px"><div class="hed">Why every feed converged on the same five formats</div>
@@ -366,11 +374,34 @@ order.forEach(k=>{const t=document.createElement('template');t.innerHTML=FORMATS
 
 /* explore pane: format index */
 const ex=$('#explore');
-ex.innerHTML=Object.keys(FORMATS).map((k,i)=>`<div class="card" style="padding:16px;display:flex;align-items:center;gap:12px">
-  <span class="msr" style="color:var(--primary);font-size:28px">${FORMATS[k].icon}</span>
+ex.innerHTML=Object.keys(FORMATS).map((k,i)=>`<div class="card" style="padding:10px 12px;display:flex;align-items:center;gap:10px">
+  <span class="msr" style="color:var(--primary);font-size:24px">${FORMATS[k].icon}</span>
   <div style="flex:1"><div style="font-size:14px;font-weight:700">${FORMATS[k].label}</div>
   <div style="font-size:11px;color:var(--on-surface-variant)">Format ${String(i+1).padStart(2,'0')} of ${Object.keys(FORMATS).length}</div></div>
   <span class="msr" style="color:var(--outline)">chevron_right</span></div>`).join('');
+
+/* alerts pane: sample notification list (local demo data) */
+$('#alerts').innerHTML=[['favorite','Mara Quinn liked your photo','2m'],['mode_comment','Ken Ito replied: "Fully agree on the walk first"','18m'],
+ ['person_add','Sana Okafor started following you','1h'],['repeat','Leo Park reposted your text post','3h'],
+ ['event','Reminder: Design systems meetup, Fri 7 PM','5h']]
+ .map(x=>`<div class="card" style="padding:12px;display:flex;align-items:center;gap:12px">
+  <span class="msr" style="color:var(--primary);font-size:24px">${x[0]}</span>
+  <div style="flex:1;font-size:13px;line-height:18px">${x[1]}</div>
+  <span style="font-size:11px;color:var(--on-surface-variant)">${x[2]}</span></div>`).join('')
+ +`<div style="text-align:center;font-size:11px;color:var(--on-surface-variant);padding:8px">Sample alerts - local demo data</div>`;
+
+/* profile pane: sample profile (local demo data) */
+$('#profile').innerHTML=`<div class="card" style="padding:16px 12px">
+  <div style="display:flex;align-items:center;gap:16px">
+   <img src="https://picsum.photos/seed/ofme/96/96" style="width:72px;height:72px;border-radius:999px" alt="">
+   <div style="flex:1"><div style="font-size:18px;font-weight:700">Sample user</div>
+   <div style="font-size:12px;color:var(--on-surface-variant)">@sample - local demo profile</div></div></div>
+  <div style="display:flex;margin-top:14px;text-align:center">
+   <div style="flex:1"><b style="font-size:16px">128</b><div style="font-size:11px;color:var(--on-surface-variant)">Posts</div></div>
+   <div style="flex:1"><b style="font-size:16px">2.4k</b><div style="font-size:11px;color:var(--on-surface-variant)">Followers</div></div>
+   <div style="flex:1"><b style="font-size:16px">312</b><div style="font-size:11px;color:var(--on-surface-variant)">Following</div></div></div></div>
+ <div class="card" style="padding:8px"><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px">
+  ${[1,2,3,4,5,6].map(i=>`<img src="https://picsum.photos/seed/pf${i}/300/300" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px" alt="">`).join('')}</div></div>`;
 
 /* ---------- interactions (real, local) ---------- */
 function toggleAct(btn,icon,n){
